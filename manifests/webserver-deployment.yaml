@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-webserver
+  labels:
+    app: airflow
+    component: webserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+      component: webserver
+  template:
+    metadata:
+      labels:
+        app: airflow
+        component: webserver
+    spec:
+      containers:
+        - name: webserver
+          image: apache/airflow:2.10.1
+          command: ["airflow", "webserver"]
+          ports:
+            - containerPort: 8080
+          env:
+            - name: AIRFLOW__CORE__EXECUTOR
+              value: KubernetesExecutor
+          volumeMounts:
+            - name: dags
+              mountPath: /usr/local/airflow/dags
+        - name: git-sync
+          image: k8s.gcr.io/git-sync/git-sync:v4.2.4
+          env:
+            - name: GIT_SYNC_REPO
+              value: "https://github.com/luciantanase14/airflow-on-kubernetes.git"
+            - name: GIT_SYNC_BRANCH
+              value: "main"
+            - name: GIT_SYNC_ROOT
+              value: "/git"
+            - name: GIT_SYNC_DEST
+              value: "repo"
+            - name: GIT_SYNC_WAIT
+              value: "30"
+          volumeMounts:
+            - name: dags
+              mountPath: /git
+      volumes:
+        - name: dags
+          emptyDir: {}

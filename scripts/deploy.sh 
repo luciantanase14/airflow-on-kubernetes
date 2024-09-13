@@ -1,0 +1,39 @@
+#!/bin/bash
+
+NAMESPACE="airflow"
+MANIFESTS_DIR="manifests"
+
+if ! command -v kubectl &> /dev/null
+then
+    echo "kubectl could not be found, please install kubectl before running this script."
+    exit 1
+fi
+
+echo "Creating Kubernetes namespace"
+kubectl get namespace $NAMESPACE &> /dev/null || kubectl create namespace $NAMESPACE
+
+echo "Applying RBAC configuration for Airflow"
+kubectl apply -f $MANIFESTS_DIR/configs.yaml -n $NAMESPACE
+
+echo "Applying ConfigMap for Airflow configuration"
+kubectl apply -f $MANIFESTS_DIR/airflow-configmap.yaml -n $NAMESPACE
+
+echo "Applying Kubernetes Secrets"
+kubectl apply -f $MANIFESTS_DIR/airflow-secrets.yaml -n $NAMESPACE
+
+echo "Deploying Airflow Scheduler"
+kubectl apply -f $MANIFESTS_DIR/scheduler-deployment.yaml -n $NAMESPACE
+
+echo "Deploying Airflow Webserver"
+kubectl apply -f $MANIFESTS_DIR/webserver-deployment.yaml -n $NAMESPACE
+
+echo "Creating Service to expose Airflow Webserver"
+kubectl apply -f $MANIFESTS_DIR/webserver-service.yaml -n $NAMESPACE
+
+echo "Checking pod status..."
+kubectl get pods -n $NAMESPACE
+
+echo "Checking service status..."
+kubectl get services -n $NAMESPACE
+
+echo "Deployment script completed."
