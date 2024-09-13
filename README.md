@@ -63,14 +63,54 @@ The **KubernetesExecutor** fits the main goal perfectly. It provides scalability
 
 ## DAG Deployment Method
 
+### Using Git-Sync Sidecar Container
 
+I choosed to use the **Git-Sync Sidecar Container** method to deploy the DAGs. This involves adding a sidecar container to the Scheduler and Webserver pods that continuously syncs DAGs from a Git repository.
+
+#### How It Works
+
+- **Scheduler and Webserver Deployments**:
+  - Located in the `manifests/` directory:
+    - `scheduler-deployment.yaml`
+    - `webserver-deployment.yaml`
+- **Git-Sync Sidecar**:
+  - Included in the deployments mentioned above.
+  - Pulls DAGs from the specified Git repository and updates the DAGs directory in the Airflow containers.
+
+#### Benefits
+
+- **Automation**: DAGs are automatically updated when changes are pushed to the Git repository.
+- **Version Control**: Utilize Git powerful features for collaboration, history tracking, and code review.
+- **Simplicity**: Avoids the need for setting up and maintaining additional storage solutions.
+
+#### Configuration
+
+To set up Git-Sync:
+
+- **Git Repository**: Ensure it has a Git repository containing the DAGs. This can be on GitHub, GitLab, or any Git server.
+- **Environment Variables**: Configure the Git-Sync container with the repository URL, branch, and synchronization frequency.
 
 ## Logging Configuration
 
+Airflow logs, including logs from tasks running in KubernetesExecutor pods, are configured to display in the Airflow UI.
 
+### How It Works
+
+- **Local Logging**: Logs are written to local files and displayed in the Airflow UI.
+- **Worker Logs**: Logs from worker pods are fetched and displayed in the Airflow console, configured through Airflow's logging settings.
+
+### Logging Setup
+
+- Configure the logging settings in `airflow.cfg` or through environment variables in the Scheduler and Webserver deployments.
+- Example logging configuration can be found in the `airflow-configmap.yaml` file in the `manifests/` directory.
 
 ## Deployment Instructions
 
+### Prerequisites
+
+- Access to a Kubernetes cluster (e.g., Amazon EKS).
+- `kubectl` installed and configured.
+- The `airflow-dags` Git repository is accessible to the cluster.
 
 
 ## How to Deploy New DAGs
