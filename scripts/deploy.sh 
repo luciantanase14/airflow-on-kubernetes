@@ -9,36 +9,31 @@ then
     exit 1
 fi
 
-# Step 1: Create Namespace
-echo "Creating Kubernetes namespace if it does not exist"
+echo "Creating Kubernetes namespace"
 kubectl get namespace $NAMESPACE &> /dev/null || kubectl create namespace $NAMESPACE
 
-# Step 2: Apply ConfigMap
+echo "Applying RBAC configuration for Airflow"
+kubectl apply -f $MANIFESTS_DIR/configs.yaml -n $NAMESPACE
+
 echo "Applying ConfigMap for Airflow configuration"
 kubectl apply -f $MANIFESTS_DIR/airflow-configmap.yaml -n $NAMESPACE
 
-# Step 3: Apply Secrets
 echo "Applying Kubernetes Secrets"
 kubectl apply -f $MANIFESTS_DIR/airflow-secrets.yaml -n $NAMESPACE
 
-# Step 4: Deploy Airflow Scheduler with Git-Sync Sidecar
 echo "Deploying Airflow Scheduler"
 kubectl apply -f $MANIFESTS_DIR/scheduler-deployment.yaml -n $NAMESPACE
 
-# Step 5: Deploy Airflow Webserver with Git-Sync Sidecar
 echo "Deploying Airflow Webserver"
 kubectl apply -f $MANIFESTS_DIR/webserver-deployment.yaml -n $NAMESPACE
 
-# Step 6: Expose Airflow Webserver via Service
 echo "Creating Service to expose Airflow Webserver"
 kubectl apply -f $MANIFESTS_DIR/webserver-service.yaml -n $NAMESPACE
 
-# Step 7: Verify Deployment Status
-echo "Checking pod status"
+echo "Checking pod status..."
 kubectl get pods -n $NAMESPACE
 
-echo "Checking service status"
+echo "Checking service status..."
 kubectl get services -n $NAMESPACE
 
-# Final message
 echo "Deployment script completed."
