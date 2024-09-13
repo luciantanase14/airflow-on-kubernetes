@@ -37,7 +37,7 @@ I chose the **KubernetesExecutor** for the Airflow deployment because it offers 
 - Each pod runs an Airflow task independently.
 - After a task is completed, the pod shuts down, freeing up resources.
 
-### Alternatives Considered
+### Alternatives I Considered
 
 #### CeleryExecutor
 
