@@ -15,7 +15,7 @@ This repository has what it needs to deploy Apache Airflow on a Kubernetes clust
 
 ## Introduction
 
-This project provides a reliable and scalable way to deploy Apache Airflow on Kubernetes. By leveraging Kubernetes' powerful orchestration capabilities, we can efficiently manage Airflow's components and workloads.
+This project provides a reliable and scalable way to deploy Apache Airflow on Kubernetes. By leveraging Kubernetes powerful orchestration capabilities, we can efficiently manage Airflow's components and workloads.
 
 ## Executor Choice
 
@@ -37,7 +37,7 @@ I chose the **KubernetesExecutor** for the Airflow deployment because it offers 
 - Each pod runs an Airflow task independently.
 - After a task is completed, the pod shuts down, freeing up resources.
 
-### Alternatives We Considered
+### Alternatives Considered
 
 #### CeleryExecutor
 
