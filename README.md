@@ -112,7 +112,52 @@ Airflow logs, including logs from tasks running in KubernetesExecutor pods, are 
 - `kubectl` installed and configured.
 - The `airflow-dags` Git repository is accessible to the cluster.
 
+### Deploy Airflow
+
+Follow these steps to deploy Airflow on your Kubernetes cluster:
+
+1. **Clone This Repository**
+
+   Clone the repository that contains the Airflow setup:
+
+   ```bash
+   git clone https://github.com/luciantanase14/airflow-on-kubernetes.git
+   cd airflow-on-kubernetes
+
+2. **Deploy Script Executable**
+    ```bash
+    chmod +x deploy.sh
+
+3. **Run the Deploy Script**
+    ```bash
+    ./deploy.sh
+
+4. **Verify the Deployment**
+    ```bash
+    kubectl get pods -n default
+    kubectl get services -n default
+
+5. **Access the Airflow UI**
+    Access the Airflow Webserver UI using the IPm or URL configured by the service. If you used a LoadBalancer service, use the external IP, for NodePort access it via the node IP and the specified port.
+
 
 ## How to Deploy New DAGs
 
+To add, or update DAGs in your Airflow setup:
 
+1. **Clone the DAGs Repository**
+
+   Clone the DAGs repository, where all DAG files are stored:
+
+   ```bash
+   git clone https://github.com/luciantanase14/airflow-dags.git
+   cd airflow-dags
+
+2. **Add or Modify DAG Files**
+    Add the new DAG files or update existing ones in the dags/ directory.
+
+3. **Commit and Push Changes**
+    ```bash
+    git add dags/new_dag.py
+    git commit -m "Add new DAG for data processing"
+    git push origin main
